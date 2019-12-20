@@ -1,0 +1,39 @@
+stages:
+  - build
+  - deploy
+
+services:
+  - docker:dind
+
+variables:
+  DOCKER_HOST: tcp://localhost:2375
+  DOCKER_TLS_CERTDIR: ""
+
+build_app:
+  image: docker:latest
+  stage: build
+  only:
+    - master
+    - tags
+  script:
+    - docker info
+    - docker login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}"
+    - docker build -t "${CI_REGISTRY_IMAGE}:latest" .
+    - docker tag "${CI_REGISTRY_IMAGE}:latest" "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME}"
+    - docker push "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME}"
+
+deploy_app:
+  image: thisiskj/kubectl-envsubst
+  stage: deploy
+#  environment: production
+  only:
+    - master
+    - tags
+  script:
+    - envsubst \${CI_COMMIT_REF_NAME} < deployment-template.yaml > deployment.yaml
+    - echo "203.145.222.228 gitlab-k8s" >> /etc/hosts
+    - kubectl apply -f deployment.yaml
+    - sleep 10
+    - kubectl get pods -n gitlab-managed-apps -o wide
+    - echo "gitlabk8s01 -> 203.145.223.89 ; gitlabk8s02 -> 203.145.222.228 ; gitlabk8s03 -> 203.145.222.214"
+    - kubectl get svc -n gitlab-managed-apps

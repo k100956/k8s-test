@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-deployment
+  labels:
+    app: example
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: example
+  template:
+    metadata:
+      labels:
+        app: example
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '8080'
+        prometheus.io/path: '/metrics'
+    spec:
+      containers:
+      - name: example
+        image: k100956/testtest:master
+        ports:
+        - containerPort: 8080
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: example-loadbalancer-service
+spec:
+  selector:
+    app: example
+  ports:
+  - protocol: TCP
+    port: 9091
+    targetPort: 8080
+  type: NodePort
+#  type: LoadBalancer
