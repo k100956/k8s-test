@@ -30,7 +30,7 @@ deploy_app:
     - master
     - tags
   script:
-    - envsubst \${CI_COMMIT_REF_NAME} < deployment-template.yaml > deployment.yaml
+    - envsubst < deployment-template.yaml > deployment.yaml
     - echo "203.145.222.228 gitlab-k8s" >> /etc/hosts
     - kubectl apply -f deployment.yaml
     - sleep 10
