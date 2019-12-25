@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: example
-        image: k100956/testtest:master
+        image: k100956/testtest:v1
         ports:
         - containerPort: 8080
 ---
