@@ -31,7 +31,6 @@ deploy_app:
     - tags
   script:
     - envsubst < deployment-template.yaml > deployment.yaml
-    - echo "203.145.223.99 gitlab-k8s" >> /etc/hosts
     - kubectl apply -f deployment.yaml
     - sleep 10
     - kubectl get pods -n gitlab-managed-apps -o wide
