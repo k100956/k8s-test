@@ -19,8 +19,8 @@ build_app:
     - docker info
     - docker login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}"
     - docker build -t "${CI_REGISTRY_IMAGE}:latest" .
-    - docker tag "${CI_REGISTRY_IMAGE}:latest" "${CI_REGISTRY_IMAGE}:v1"
-    - docker push "${CI_REGISTRY_IMAGE}:v1"
+    - docker tag "${CI_REGISTRY_IMAGE}:latest" "${CI_REGISTRY_IMAGE}:v10"
+    - docker push "${CI_REGISTRY_IMAGE}:v10"
 
 deploy_app:
   image: thisiskj/kubectl-envsubst
@@ -34,5 +34,5 @@ deploy_app:
     - kubectl apply -f deployment.yaml
     - sleep 10
     - kubectl get pods -n gitlab-managed-apps -o wide
-    - echo "gitlabk8s01 -> 203.145.223.89 ; gitlabk8s02 -> 203.145.222.228 ; gitlabk8s03 -> 203.145.222.214"
+    - echo "gitlabk8s1 -> 103.124.73.111 ; gitlabk8s2 -> 103.124.73.105 ; gitlabk8s3 -> 103.124.73.151"
     - kubectl get svc -n gitlab-managed-apps
